@@ -309,31 +309,44 @@ class TTSService {
 // 3. 静态数据处理（法语基础数据）
 // ==========================================
 
-const parseToSegments = (str: string): PhoneticSegment[] => {
-  if (!str) return [];
-  // 法语音标格式: bonjour[bɔ̃ʒuʁ] 或 bonjour (bɔ̃ʒuʁ)
-  const regex = /([a-zA-ZÀ-ÿ'-]+)(?:\[([^\]]+)\]|\(([^)]+)\))|([^a-zA-ZÀ-ÿ'\[\]()]+)/gi;
+const parseToSegments = (input: any): PhoneticSegment[] => {
+  if (!input) return [];
+  if (Array.isArray(input)) return input as PhoneticSegment[];
+  if (typeof input !== 'string') return [{ text: String(input) }];
+
+  const str = input;
   const segments: PhoneticSegment[] = [];
-  let match;
 
-  if (Array.isArray(str)) return str as any;
-  if (typeof str !== 'string') return [];
+  // 匹配：word[ipa] 或 word(ipa)
+  // 其它字符（空格/标点/中文等）会被保留为纯 text segment
+  const re = /([A-Za-zÀ-ÿ'-]+)(?:\[([^\]]+)\]|\(([^)]+)\))?/g;
 
-  while ((match = regex.exec(str)) !== null) {
-    if (match[1]) {
-      const text = match[1];
-      const phonetic = match[2] || match[3];
-      segments.push(phonetic ? { text, phonetic } : { text });
-    } else if (match[4]) {
-      segments.push({ text: match[4] });
+  let lastIndex = 0;
+  let m: RegExpExecArray | null;
+
+  while ((m = re.exec(str)) !== null) {
+    // 先把前面的非单词部分（空格/标点）塞进去
+    if (m.index > lastIndex) {
+      segments.push({ text: str.slice(lastIndex, m.index) });
     }
+
+    const word = m[1];
+    const ipa = m[2] || m[3];
+
+    segments.push(ipa ? { text: word, phonetic: ipa } : { text: word });
+
+    lastIndex = re.lastIndex;
   }
 
-  if (segments.length === 0) {
-    return [{ text: str }];
+  // 末尾残余（标点/空格等）
+  if (lastIndex < str.length) {
+    segments.push({ text: str.slice(lastIndex) });
   }
-  return segments;
+
+  // 兜底：如果什么都没解析出来，就整句返回
+  return segments.length ? segments : [{ text: str }];
 };
+
 
 // 法语字母表数据（含音标和示例）
 const RAW_ALPHABET_DATA = [
