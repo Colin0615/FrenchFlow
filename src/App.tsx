@@ -1133,7 +1133,7 @@ Structure:
   private static async requestGemini(prompt: string, settings: AppSettings, imageData?: string): Promise<string> {
     if (!settings.geminiKey) throw new Error("缺少 Gemini Key");
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${settings.geminiKey}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${settings.geminiKey}`;
     const parts: any[] = [{ text: prompt }];
     if (imageData) parts.push({ inlineData: { mimeType: "image/jpeg", data: imageData } });
 
