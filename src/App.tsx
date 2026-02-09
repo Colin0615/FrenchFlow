@@ -22,13 +22,13 @@ declare const __initial_auth_token: string | undefined;
 // 0. FIREBASE 配置
 // ==========================================
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
-  measurementId: ""
+  apiKey: "AIzaSyDseqEL0u9cC_fhVNc3vC4RGpfQkb_5O78",
+  authDomain: "frflow.firebaseapp.com",
+  projectId: "frflow",
+  storageBucket: "frflow.firebasestorage.app",
+  messagingSenderId: "699516569796",
+  appId: "1:699516569796:web:b2b7930c19770b00d56191",
+  measurementId: "G-9WT1P6DK03"
 };
 
 // 初始化 Firebase
